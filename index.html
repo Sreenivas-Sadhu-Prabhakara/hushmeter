@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; img-src 'self' data:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'">
+  <title>hushmeter — measure and log how loud a room is</title>
+  <meta name="description" content="A pocket noise-level logger. Measure how loud a space is with your mic and chart it over time — min, average and peak per session. Private, offline, nothing recorded or uploaded.">
+  <meta name="color-scheme" content="dark light">
+  <link rel="canonical" href="https://sreenivas-sadhu-prabhakara.github.io/hushmeter/">
+  <meta name="robots" content="index, follow, max-image-preview:large">
+  <meta name="author" content="Sreenivas Sadhu Prabhakara">
+  <meta name="keywords" content="noise meter, sound level logger, decibel meter, dB meter online, measure room noise, noise monitor, baby room noise, office noise level, sound logger, web audio meter">
+  <meta name="theme-color" content="#0B0E0C" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#0B0E0C" media="(prefers-color-scheme: light)">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="hushmeter">
+  <meta property="og:title" content="hushmeter — measure and log how loud a room is">
+  <meta property="og:description" content="A pocket noise-level logger. Measure how loud a space is with your mic and chart it over time — min, average and peak per session. Private, offline, nothing recorded or uploaded.">
+  <meta property="og:url" content="https://sreenivas-sadhu-prabhakara.github.io/hushmeter/">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://sreenivas-sadhu-prabhakara.github.io/hushmeter/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="hushmeter — a lime waveform on a dark instrument panel with a decibel readout">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="hushmeter — measure and log how loud a room is">
+  <meta name="twitter:description" content="A pocket noise-level logger. Measure how loud a space is with your mic and chart it over time — min, average and peak per session. Private, offline, nothing recorded or uploaded.">
+  <meta name="twitter:image" content="https://sreenivas-sadhu-prabhakara.github.io/hushmeter/og-image.png">
+  <meta name="twitter:image:alt" content="hushmeter — a lime waveform on a dark instrument panel with a decibel readout">
+
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <!-- Structured data (data block; not affected by script-src) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "hushmeter",
+    "description": "A client-side noise-level logger that measures how loud a space is using your microphone and charts the level over time, with min, average and peak for each session. Private and offline — audio is analysed on your device and nothing is recorded or uploaded.",
+    "url": "https://sreenivas-sadhu-prabhakara.github.io/hushmeter/",
+    "applicationCategory": "UtilitiesApplication",
+    "operatingSystem": "Any (modern web browser with microphone)",
+    "browserRequirements": "Requires a modern web browser with JavaScript, the Web Audio API and microphone access.",
+    "isAccessibleForFree": true,
+    "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+    "license": "https://opensource.org/licenses/MIT",
+    "author": { "@type": "Person", "name": "Sreenivas Sadhu Prabhakara" },
+    "softwareVersion": "0.1.0",
+    "featureList": [
+      "Live relative loudness readout from your microphone",
+      "Moving waveform and a session timeline chart",
+      "Running minimum, average and peak per session",
+      "Named, tagged sessions saved in your browser",
+      "Export a session as CSV or a text summary",
+      "Calibration offset to align against a known reference",
+      "Runs 100% offline; nothing is recorded or uploaded"
+    ]
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Is hushmeter a calibrated sound-level meter?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Phone and laptop microphones are uncalibrated and most apply automatic gain control, so hushmeter shows a relative loudness indicator, not certified decibels. It is great for comparing rooms, times of day and before/after changes, but do not use it for occupational, medical or legal noise-compliance decisions. Use a calibrated SPL meter for anything official."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does hushmeter record or upload my audio?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Audio from your microphone is analysed live in your browser to compute a loudness number and is never written to a file, saved, or sent anywhere. A strict Content-Security-Policy blocks all network connections. Only the numeric session data you choose to save is stored, and it stays in your browser's local storage."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How can I make the readings more accurate?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Use the calibration offset slider. If you have a known reference — a trusted SPL meter or a source with a stated level — hold both in the same spot and slide the offset until hushmeter matches. The offset is remembered on your device. Turning off system audio enhancements or noise cancellation also helps, since they alter the signal the meter sees."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Why does the reading jump around or seem to drift?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Most microphones apply automatic gain control that slowly raises quiet sounds and pulls down loud ones, so a steady tone can appear to drift. hushmeter smooths the signal to reduce this, but it cannot fully remove it. Sudden spikes usually reflect real transient sounds like a door or a clap."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Does hushmeter work offline?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Once the page is open it needs no internet at all. There are no external fonts, scripts, images or analytics, and the Content-Security-Policy forbids any network request. Your saved sessions live only on your device."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Where are my saved sessions kept?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "In your browser's local storage on this device only. They are not synced or backed up anywhere. Clearing your browser data, or using a different browser or device, will not show them. Export a session to CSV if you want a copy you can keep."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#live">Skip to the meter</a>
+
+  <!-- ============ HERO ============ -->
+  <header class="hero" id="top">
+    <div class="hero__grid" aria-hidden="true">
+      <svg class="grid" viewBox="0 0 1440 360" preserveAspectRatio="xMidYMid slice" role="presentation">
+        <g class="grid__lines"></g>
+        <g class="grid__trace"></g>
+      </svg>
+    </div>
+
+    <div class="hero__inner">
+      <p class="eyebrow">Noise logger &middot; relative dB &middot; offline</p>
+      <h1 class="hero__title">How loud is it&mdash;<span class="hero__accent">really?</span></h1>
+      <p class="hero__lede">
+        hushmeter turns your mic into a pocket noise logger. Watch the level move, run a session,
+        and get the <em>min</em>, <em>average</em> and <em>peak</em> over time. Nothing is recorded or
+        uploaded&mdash;the audio is measured on your device and thrown away.
+      </p>
+      <p class="hero__badge">
+        <span class="hero__badge-dot" aria-hidden="true"></span>
+        A <strong>relative</strong> indicator, not a calibrated SPL meter. <a href="#reference">What the numbers mean &rsaquo;</a>
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ LIVE METER ============ -->
+    <section class="live" id="live" aria-labelledby="liveHeading">
+      <h2 class="visually-hidden" id="liveHeading">Live sound level</h2>
+
+      <div class="live__panel">
+        <!-- big readout + scope -->
+        <div class="scope">
+          <div class="scope__head">
+            <div class="readout" role="status" aria-live="off">
+              <span class="readout__num" id="levelNum" aria-hidden="true">--</span>
+              <span class="readout__unit">dB<span class="readout__unit-sub">(rel)</span></span>
+              <span class="readout__band" id="levelBand">Idle</span>
+            </div>
+            <p class="readout__sr visually-hidden" id="levelSr" aria-live="polite">Meter idle.</p>
+          </div>
+
+          <div class="scope__canvas-wrap">
+            <canvas id="wave" class="scope__canvas" width="900" height="180"
+                    role="img" aria-label="Live audio waveform from the microphone"></canvas>
+            <div class="scope__scale" aria-hidden="true">
+              <span>40</span><span>60</span><span>80</span><span>100</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- session stats -->
+        <div class="stats" aria-label="Current session statistics">
+          <div class="stat">
+            <span class="stat__label">Min</span>
+            <span class="stat__val" id="statMin">--</span>
+          </div>
+          <div class="stat stat--avg">
+            <span class="stat__label">Avg</span>
+            <span class="stat__val" id="statAvg">--</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Peak</span>
+            <span class="stat__val stat__val--peak" id="statMax">--</span>
+          </div>
+          <div class="stat">
+            <span class="stat__label">Elapsed</span>
+            <span class="stat__val" id="statTime">0:00</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- controls -->
+      <div class="live__controls">
+        <div class="live__buttons">
+          <button type="button" class="btn btn--primary" id="micBtn">Enable microphone</button>
+          <button type="button" class="btn btn--rec" id="sessionBtn" disabled>Start session</button>
+        </div>
+        <div class="calib">
+          <label class="calib__label" for="calib">Calibration offset</label>
+          <input type="range" id="calib" class="calib__range" min="-30" max="30" step="1" value="0"
+                 aria-describedby="calibHint">
+          <output class="calib__out" id="calibOut" for="calib">0 dB</output>
+        </div>
+      </div>
+      <p class="calib__hint" id="calibHint">
+        Slide to align hushmeter against a reading you trust. The reading below is uncalibrated until you do.
+      </p>
+
+      <!-- status / error line -->
+      <p class="live__msg" id="micMsg" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- ============ SESSION TIMELINE ============ -->
+    <section class="timeline" id="timeline" aria-labelledby="timelineHeading" hidden>
+      <div class="timeline__head">
+        <h2 class="timeline__heading" id="timelineHeading">Session timeline</h2>
+        <p class="timeline__meta" id="timelineMeta"></p>
+      </div>
+      <div class="timeline__canvas-wrap">
+        <canvas id="chart" class="timeline__canvas" width="1040" height="240"
+                role="img" aria-label="Line chart of sound level over the session"></canvas>
+      </div>
+    </section>
+
+    <!-- ============ HISTORY ============ -->
+    <section class="history" id="history" aria-labelledby="historyHeading">
+      <div class="history__head">
+        <h2 class="history__heading" id="historyHeading">Saved sessions</h2>
+        <button type="button" class="btn btn--ghost" id="clearAllBtn" hidden>Delete all</button>
+      </div>
+      <div class="history__list" id="historyList"></div>
+      <p class="history__empty" id="historyEmpty">
+        No sessions saved yet. Enable your microphone, press <strong>Start session</strong>, and stop
+        when you are done to save a measurement here.
+      </p>
+    </section>
+
+    <!-- ============ REFERENCE GUIDE ============ -->
+    <section class="reference" id="reference" aria-labelledby="refHeading">
+      <div class="reference__inner">
+        <h2 class="reference__heading" id="refHeading">What the numbers mean</h2>
+        <p class="reference__note">
+          Indicative everyday levels, in approximate A-weighted decibels. Your uncalibrated reading
+          will not line up exactly&mdash;use this as a <em>rough</em> map, and calibrate above if you can.
+        </p>
+        <ul class="ref-scale" id="refScale">
+          <li class="ref-row" data-band="quiet"><span class="ref-row__db">~30</span><span class="ref-row__name">Whisper, quiet bedroom at night</span></li>
+          <li class="ref-row" data-band="quiet"><span class="ref-row__db">~40</span><span class="ref-row__name">Library, soft rainfall</span></li>
+          <li class="ref-row" data-band="moderate"><span class="ref-row__db">~50</span><span class="ref-row__name">Quiet home, refrigerator hum</span></li>
+          <li class="ref-row" data-band="moderate"><span class="ref-row__db">~60</span><span class="ref-row__name">Normal conversation, office</span></li>
+          <li class="ref-row" data-band="loud"><span class="ref-row__db">~70</span><span class="ref-row__name">Busy restaurant, vacuum cleaner</span></li>
+          <li class="ref-row" data-band="loud"><span class="ref-row__db">~80</span><span class="ref-row__name">Busy traffic, alarm clock</span></li>
+          <li class="ref-row" data-band="risk"><span class="ref-row__db">85+</span><span class="ref-row__name">Hearing risk with prolonged exposure</span></li>
+          <li class="ref-row" data-band="risk"><span class="ref-row__db">100+</span><span class="ref-row__name">Motorcycle, nightclub, power tools</span></li>
+        </ul>
+        <p class="reference__risk">
+          Sustained exposure at or above about <strong>85 dB(A)</strong> can damage hearing over time.
+          hushmeter is not calibrated and must not be used to judge whether a place is legally or medically safe.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="foot">
+    <div class="foot__inner">
+      <p class="foot__disclaimer">
+        <strong>Indicative only &mdash; not a calibrated sound-level meter.</strong> hushmeter uses an
+        uncalibrated microphone with automatic gain control and shows a relative loudness indicator for
+        general awareness. Do <strong>not</strong> use it for occupational, medical, or legal
+        noise-compliance decisions. For anything official, use a certified SPL meter and follow local regulations.
+      </p>
+      <p class="foot__meta">
+        <span>Audio never leaves your device</span><span class="foot__dot">&middot;</span>
+        <span>Works 100% offline</span><span class="foot__dot">&middot;</span>
+        <span>No network, no accounts</span><span class="foot__dot">&middot;</span>
+        <span>MIT&nbsp;License</span><span class="foot__dot">&middot;</span>
+        <span>&copy; 2026 Sreenivas&nbsp;Sadhu&nbsp;Prabhakara</span>
+      </p>
+    </div>
+  </footer>
+
+  <!-- Save-session dialog (native, no inline logic) -->
+  <dialog class="save-dialog" id="saveDialog" aria-labelledby="saveTitle">
+    <form method="dialog" class="save-form" id="saveForm">
+      <h2 class="save-form__title" id="saveTitle">Save this session</h2>
+      <p class="save-form__summary" id="saveSummary"></p>
+      <label class="save-form__label" for="sessionName">Name or tag</label>
+      <input type="text" id="sessionName" class="save-form__input" maxlength="60"
+             placeholder="e.g. Baby's room, 9pm" autocomplete="off">
+      <div class="save-form__actions">
+        <button type="submit" value="discard" class="btn btn--ghost">Discard</button>
+        <button type="submit" value="save" class="btn btn--primary" id="saveConfirm">Save session</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

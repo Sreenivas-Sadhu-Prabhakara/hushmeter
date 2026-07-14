@@ -1,0 +1,24 @@
+{
+  "name": "hushmeter",
+  "short_name": "hushmeter",
+  "description": "A private, offline noise-level logger. Measure how loud a space is and chart it over time — nothing is recorded or uploaded.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#0B0E0C",
+  "theme_color": "#0B0E0C",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
